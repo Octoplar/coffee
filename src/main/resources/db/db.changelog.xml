@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+    <changeSet id="table_CoffeeType" author="octoplar">
+        <createTable tableName="CoffeeType">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="type_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="price" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="disabled" type="CHAR(1)"/>
+        </createTable>
+
+        <sql>
+            create index CT_I on CoffeeType (
+            id asc
+            );
+        </sql>
+
+        <insert tableName="CoffeeType">
+            <column name="id" value="1"/>
+            <column name="type_name" value="Espresso"/>
+            <column name="price" value="3"/>
+            <column name="disabled" value="N"/>
+        </insert>
+        <insert tableName="CoffeeType">
+            <column name="id" value="2"/>
+            <column name="type_name" value="Mocha"/>
+            <column name="price" value="5"/>
+            <column name="disabled" value="N"/>
+        </insert>
+        <insert tableName="CoffeeType">
+            <column name="id" value="3"/>
+            <column name="type_name" value="Cappuccino"/>
+            <column name="price" value="7"/>
+            <column name="disabled" value="N"/>
+        </insert>
+        <insert tableName="CoffeeType">
+            <column name="id" value="4"/>
+            <column name="type_name" value="Americano"/>
+            <column name="price" value="10"/>
+            <column name="disabled" value="Y"/>
+        </insert>
+
+        <rollback>
+            <dropTable tableName="CoffeeType"/>
+        </rollback>
+    </changeSet>
+
+
+
+    <changeSet id="table_CoffeeOrder" author="octoplar">
+        <createTable tableName="CoffeeOrder">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="order_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)"/>
+
+            <column name="delivery_address" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="cost" type="DOUBLE"/>
+        </createTable>
+
+
+        <sql>
+            create index CO_I1 on CoffeeOrder (
+            id asc
+            );
+        </sql>
+
+        <rollback>
+            <dropTable tableName="CoffeeOrder"/>
+        </rollback>
+    </changeSet>
+
+
+
+    <changeSet id="table_CoffeeOrderItem" author="octoplar">
+        <createTable tableName="CoffeeOrderItem">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="type_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!--todo-->
+            <column name="order_id" type="INT"/>
+
+            <column name="quantity" type="INT"/>
+        </createTable>
+
+
+        <sql>
+            create index COI_I on CoffeeOrderItem (
+            order_id asc
+            );
+
+            create index COI_3 on CoffeeOrderItem (
+            type_id asc
+            );
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="CoffeeOrderItem"
+                                 baseColumnNames="order_id"
+                                 constraintName="COI_CO"
+                                 referencedTableName="CoffeeOrder"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="CoffeeOrderItem"
+                                 baseColumnNames="type_id"
+                                 constraintName="COI_CT"
+                                 referencedTableName="CoffeeType"
+                                 referencedColumnNames="id"/>
+
+        <rollback>
+            <dropTable tableName="CoffeeOrderItem"/>
+        </rollback>
+    </changeSet>
+
+
+    
+    <changeSet id="table_Configuration" author="">
+        <createTable tableName="Configuration">
+            <column name="id" type="VARCHAR(20)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="value" type="VARCHAR(30)"/>
+        </createTable>
+
+        <insert tableName="Configuration">
+            <column name="id" value="free_cup"/>
+            <column name="value" value="5"/>
+        </insert>
+
+        <insert tableName="Configuration">
+            <column name="id" value="free_delivery"/>
+            <column name="value" value="50"/>
+        </insert>
+
+        <insert tableName="Configuration">
+            <column name="id" value="delivery_cost"/>
+            <column name="value" value="5"/>
+        </insert>
+
+        <rollback>
+            <dropTable tableName="Configuration"/>
+        </rollback>
+    </changeSet>
+    
+    
+</databaseChangeLog>

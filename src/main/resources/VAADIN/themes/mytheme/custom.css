@@ -1,0 +1,39 @@
+.cc-button-zoom:hover  {
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    transform: scale(1.1);
+}
+.cc-item-button{
+    background-color: green;
+    border-radius: 10px;
+    font-size: 18px;
+    color: white;
+}
+.cc-wrap-text{
+    word-wrap: break-word; /* IE  */
+    white-space: -moz-pre-wrap; /* Firefox */
+}
+.cc-order-item{
+     border: ridge #1b87e3;
+     background-color: #0000FF;
+     vertical-align: middle;
+}
+.cc-order-item:hover{
+    background-color: #1b87e3;
+}
+.cc-order-item-name{
+    font-size: 18px;
+    color: gold;
+    cursor: pointer;
+}
+.cc-order-item-price{
+    font-size: 20px;
+    color: chartreuse;
+    cursor: pointer;
+}
+.cc-selector{
+    border: solid #257d1a;
+    background-color: #2d9f19;
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+        start-state="coffee_list">
+
+    <var name="coffeeList" class="java.util.ArrayList"/>
+    <var name="order" class="net.octoplar.backend.entity.CoffeeOrder"/>
+    <var name="nameAndAddress" class="net.octoplar.backend.util.NameAndAddress"/>
+    <var name="detailedOrderCost" class="net.octoplar.backend.util.DetailedOrderCost"/>
+    <var name="orderInfoUrl" class="java.lang.String"/>
+    <on-start>
+        <evaluate expression="webflowController.getCoffeeTypes()" result="coffeeList"/>
+        <evaluate expression="new net.octoplar.backend.entity.CoffeeOrder()" result="order"/>
+        <evaluate expression="new net.octoplar.backend.util.NameAndAddress()" result="nameAndAddress"/>
+    </on-start>
+
+    
+    <view-state id="coffee_list" view="coffee_list_webflow">
+        <transition on="order" to="setItems"/>
+    </view-state>
+
+    <action-state id="setItems">
+        <evaluate expression="webflowController.setItems(order, requestParameters)"/>
+        <transition on-exception="net.octoplar.backend.validation.ValidationException" to="coffee_list"/>
+        <transition to="calculate_cost"/>
+    </action-state>
+
+    <action-state id="calculate_cost">
+        <evaluate expression="webflowController.calculateCost(order)" result="detailedOrderCost"/>
+        <transition to="address_input"/>
+    </action-state>
+
+    <view-state id="address_input" view="address_input_webflow" model="nameAndAddress">
+        <transition on="address_entered" to="fill_date_and_cost" validate="true"/>
+    </view-state>
+
+    <action-state id="fill_date_and_cost">
+        <evaluate expression="webflowController.fillDateAndCost(order)"/>
+        <evaluate expression="order.setName(nameAndAddress.getName())"/>
+        <evaluate expression="order.setAddress(nameAndAddress.getAddress())"/>
+        <transition to="fill_name"/>
+    </action-state>
+
+    <action-state id="fill_name">
+        <evaluate expression="order.setName(nameAndAddress.getName())"/>
+        <transition to="fill_address"/>
+    </action-state>
+
+    <action-state id="fill_address">
+        <evaluate expression="order.setAddress(nameAndAddress.getAddress())"/>
+        <transition to="validate_order"/>
+    </action-state>
+
+    <decision-state id="validate_order">
+        <if test="webflowController.validateOrder(order)"
+            then="save_order"
+            else="coffee_list"/>
+    </decision-state>
+
+    <action-state id="save_order">
+        <evaluate expression="webflowController.save(order)" result="orderInfoUrl"/>
+        <transition to="thank_user"/>
+    </action-state>
+
+    <end-state id="thank_user" view="thank_user"/>
+
+</flow>
